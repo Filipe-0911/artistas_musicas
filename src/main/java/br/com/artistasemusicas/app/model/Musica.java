@@ -63,4 +63,18 @@ public class Musica {
         return this.id;
     }
 
+    public void setNome(String novoNome) {
+        this.nome = novoNome;
+    }
+
+    public void setDuracaoEmSegundos(int duracaoEmSegundos) {
+        this.duracaoEmSegundos = duracaoEmSegundos;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
+    
+
 }

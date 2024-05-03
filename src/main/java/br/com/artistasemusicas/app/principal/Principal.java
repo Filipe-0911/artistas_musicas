@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.artistasemusicas.app.repository.ArtistaRepository;
 import br.com.artistasemusicas.app.repository.MusicasRepository;
-import jakarta.persistence.EntityManager;
 import br.com.artistasemusicas.app.model.Artista;
 import br.com.artistasemusicas.app.model.Musica;
-
 
 public class Principal {
     private Scanner leitura = new Scanner(System.in);
@@ -21,15 +19,13 @@ public class Principal {
     private ArtistaRepository repositorioArtista;
     @Autowired
     private MusicasRepository repositorioMusica;
-    @Autowired
-    private EntityManager entityManager;
 
     private Artista artistaEncontrado;
     private Musica musicaEncontrada;
 
     public Principal(ArtistaRepository repositorioArtista, MusicasRepository repositorioMusica) {
         this.repositorioArtista = repositorioArtista;
-        this.repositorioMusica = repositorioMusica;
+        this.repositorioMusica  = repositorioMusica;
     }
 
     public void exibeMenu() {
@@ -64,30 +60,31 @@ public class Principal {
             leitura.nextLine();
 
             switch (opcao) {
-                case 1:
+                case 1: 
                     criaArtista();
                     break;
-                case 2:
+                case 2: 
                     insereMusicaPorArtista();
                     break;
-                case 3:
+                case 3: 
                     listarArtistasInseridos();
                     break;
-                case 4:
+                case 4: 
                     listarMusicasinseridas();
                     break;
-                case 5:
+                case 5: 
                     buscarMusicasPorArtista();
                     break;
-                case 6:
+                case 6: 
                     alterarArtista();
                     break;
-                //adicionar alterarMusica()
-
-                case 8:
+                case 7: 
+                    alterarMusica();
+                    break;
+                case 8: 
                     excluirArtista();
                     break;
-                case 9:
+                case 9: 
                     excluirMusica();
                     break;
             }
@@ -97,13 +94,12 @@ public class Principal {
 
     private void buscarMusicasPorArtista() {
         System.out.println("Digite o nome do artista que você deseja visualizar as músicas: ");
-        String nomeArtista = leitura.nextLine();
+        String            nomeArtista    = leitura.nextLine();
         Optional<Artista> artistaBuscado = repositorioArtista.findByNomeContainingIgnoreCase(nomeArtista);
-        if(artistaBuscado.isPresent()) {
+        if (artistaBuscado.isPresent()) {
             artistaEncontrado = artistaBuscado.get();
             artistaEncontrado.getMusicas().stream().forEach(System.out::println);
         }
-
 
     }
 
@@ -141,7 +137,7 @@ public class Principal {
 
     private void insereMusicaPorArtista() {
         System.out.println("Digite o nome do artista que deseja adicionar músicas: ");
-        String nomeArtista = leitura.nextLine();
+        String            nomeArtista    = leitura.nextLine();
         Optional<Artista> artistaBuscado = buscaArtista(nomeArtista);
 
         if (artistaBuscado.isPresent()) {
@@ -193,31 +189,31 @@ public class Principal {
 
         if (artista.isPresent()) {
             switch (alteracao) {
-                case 1:
+                case 1: 
                     System.out.println("Digite o novo nome: ");
-                    String novoNome = leitura.nextLine();
-                    artistaEncontrado = artista.get();
+                    String novoNome          = leitura.nextLine();
+                           artistaEncontrado = artista.get();
                     artistaEncontrado.setNome(novoNome);
 
                     break;
 
-                case 2:
+                case 2: 
                     System.out.println("Digite o novo nome da banda: ");
-                    String novoNomeDaBanda = leitura.nextLine();
-                    artistaEncontrado = artista.get();
+                    String novoNomeDaBanda   = leitura.nextLine();
+                           artistaEncontrado = artista.get();
                     artistaEncontrado.setNomeDaBanda(novoNomeDaBanda);
 
                     break;
 
-                case 3:
+                case 3: 
                     System.out.println("Digite o novo tipo de artista: ");
-                    String novoTipoArtista = leitura.nextLine();
-                    artistaEncontrado = artista.get();
+                    String novoTipoArtista   = leitura.nextLine();
+                           artistaEncontrado = artista.get();
                     artistaEncontrado.setTipoArtista(novoTipoArtista);
 
                     break;
 
-                case 4:
+                case 4: 
                     System.out.println("Digite o nova idade do artista: ");
                     int novaIdade = leitura.nextInt();
                     leitura.nextLine();
@@ -226,15 +222,15 @@ public class Principal {
 
                     break;
 
-                case 5:
+                case 5: 
                     System.out.println("Digite o nova data de nascimento do artista: ");
-                    String novaData = leitura.nextLine();
-                    artistaEncontrado = artista.get();
+                    String novaData          = leitura.nextLine();
+                           artistaEncontrado = artista.get();
                     artistaEncontrado.setDataNascimento(novaData);
 
                     break;
 
-                default:
+                default: 
                     System.out.println("Opção inválida.");
                     break;
             }
@@ -251,6 +247,7 @@ public class Principal {
         }
 
     }
+
     @Transactional
     private void excluirArtista() {
         System.out.println("Digite o nome de um artista: ");
@@ -262,34 +259,34 @@ public class Principal {
 
             try {
                 repositorioArtista.delete(artistaEncontrado);
-                // entityManager.flush();
                 System.out.println("Artista excluído com sucesso!");
             } catch (Exception e) {
                 System.out.println("Ocorreu um erro: " + e);
             }
         }
     }
+
     @Transactional
     private void excluirMusica() {
         System.out.println("Digite o nome de uma música: ");
         String nome = leitura.nextLine();
-    
+
         Optional<Musica> musicaBuscada = repositorioMusica.findByNomeContainingIgnoreCase(nome);
         if (musicaBuscada.isPresent()) {
             musicaEncontrada = musicaBuscada.get();
-            
-            try {
-                Artista artista = musicaEncontrada.getCompositor();
-                Long idMusica = musicaEncontrada.getId();
 
-                List<Musica> listaMusicas = artista.getMusicas();
-                int indexDaMusica = listaMusicas.indexOf(musicaEncontrada);
+            try {
+                Artista artista  = musicaEncontrada.getCompositor();
+                Long    idMusica = musicaEncontrada.getId();
+
+                List<Musica> listaMusicas  = artista.getMusicas();
+                int          indexDaMusica = listaMusicas.indexOf(musicaEncontrada);
 
                 listaMusicas.remove(indexDaMusica);
                 artista.setListaMusica(listaMusicas);
-                
+
                 repositorioMusica.deletaPeloId(idMusica);
-                
+
                 System.out.println("Música excluída com sucesso!");
             } catch (Exception e) {
                 System.out.println("Ocorreu um erro: " + e);
@@ -299,6 +296,41 @@ public class Principal {
             System.out.println("Música não encontrada! Verifique o nome que você digitou.");
         }
     }
-    
+
+    private void alterarMusica() {
+        System.out.println("Digite o nome da música que deseja alterar: ");
+        String nomeMusica = leitura.nextLine();
+
+        Optional<Musica> musicaBuscada = repositorioMusica.findByNomeContainingIgnoreCase(nomeMusica);
+        if (musicaBuscada.isPresent()) {
+            musicaEncontrada = musicaBuscada.get();
+            System.out.println("O que deseja alterar? Escolha a opção:\n1 - Nome\n2 - Duração\n3 - Álbum");
+            int opcao = leitura.nextInt();
+            leitura.nextLine();
+            switch (opcao) {
+                case 1: 
+                    System.out.println("Digite o novo nome: ");
+                    String novoNome = leitura.nextLine();
+                    musicaEncontrada.setNome(novoNome);
+                    repositorioMusica.save(musicaEncontrada);
+                    break;
+                case 2: 
+                    System.out.println("Digite a nova duração: ");
+                    int novaDuracao = leitura.nextInt();
+                    leitura.nextLine();
+                    musicaEncontrada.setDuracaoEmSegundos(novaDuracao);
+                    repositorioMusica.save(musicaEncontrada);
+                    break;
+                case 3: 
+                    System.out.println("Digite o novo álbum: ");
+                    String novoAlbum = leitura.nextLine();
+                    musicaEncontrada.setAlbum(novoAlbum);
+                    repositorioMusica.save(musicaEncontrada);
+                    break;
+            }
+        } else {
+            System.out.println("Música não encontada. Verifique o nome digitado.");
+        }
+    }
 
 }
